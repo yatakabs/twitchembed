@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Twitch Embedded Palyer</title>
+        <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+        <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/linq.js/4.0.0/linq.js" integrity="sha512-1xYFoIewi5LmSRllBARwDD0mBTQscchcMXKILLYTA/fFFO1z8tD/jtSt1lzzyle6Kxeu6MQ/GlkxFzWwAwuUzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>        
+        
+    </head>
+    <body style="border: 0; margin: 0; padding: 0;">
+        <div id="player_container" style="width: 100%; height: 100%;"></div>
+
+        <script type="module">
+            import Enumerable from 'https://cdnjs.cloudflare.com/ajax/libs/linq.js/4.0.0/linq.js'
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const channelId = urlSearchParams.get("channel") ?? "maguro_bs";
+
+            const options = {
+              width: "100%",
+              height: "100%",
+              channel: channelId,
+              parent: [window.location.hostname || "localhost"],
+              
+              autoplay: true
+            };
+
+            let player = new Twitch.Player("player_container", options);
+            player.setMuted(false);
+            player.setVolume(1.0);
+            
+            player.addEventListener(
+                Twitch.Player.ONLINE,
+                () => {
+                    var qualities = player.getQualities();
+
+                    var quality = Enumerable.from(qualities)
+                        .firstOrDefault(x => x.name.includes("source"));
+
+                    if(quality) {
+                        player.setQuality(quality);
+                    }
+
+                    player.setVolume(1);
+                    player.play();
+                }
+            );
+            
+            player.setMuted(false);
+            player.setVolume(1.0);
+            player.play();
+        </script>        
+    </body>
+</html>
