@@ -33,7 +33,7 @@
                     var qualities = player.getQualities();
 
                     var quality = Enumerable.from(qualities)
-                        .firstOrDefault(x => x.name.includes("source"));
+                        .firstOrDefault(x => x.name.includes("source") || x.name.includes("Source"));
 
                     if(quality) {
                         player.setQuality(quality);
