@@ -33,33 +33,39 @@
 
         player.addEventListener(
             Twitch.Player.ONLINE,
-            () => {
-                setInterval(() => {
+            (e) => {
+                console.warn("Channel went online.", e);
+
+                const updateQuality = () => {
                     var currentQuality = player.getQuality();
                     console.info("current quality:", currentQuality);
 
-                    if (currentQuality == "auto") {
+                    if (currentQuality != "chunked") {
                         var qualities = player.getQualities();
-                        var newQuality = Enumerable.from(qualities)
-                            .firstOrDefault(x => x.name.toLowerCase().includes("source"));
+
+                        var newQuality = Enumerable
+                            .from(qualities)
+                            .firstOrDefault(x => x.name.toLowerCase().includes("source"))
+                            || Enumerable
+                                .from(qualities)
+                                .firstOrDefault(x => x.group.toLowerCase() == "chunk");
 
                         if (newQuality) {
                             player.setQuality(newQuality.group);
                             console.info("quality set:", newQuality);
                         }
+
+                        setTimeout(updateQuality, 1000);
                     }
-                }, 3000);
+                };
+
+                updateQuality();
 
                 window.player = player;
-
                 player.setVolume(1);
                 player.play();
             }
         );
-
-        player.setMuted(false);
-        player.setVolume(1.0);
-        player.play();
     </script>
 </body>
 
